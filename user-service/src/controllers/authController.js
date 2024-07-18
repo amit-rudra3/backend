@@ -2,6 +2,9 @@ import {jwtConfig} from '../../config/config.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { User } from '../models/User.js';
+import { Sequelize } from 'sequelize';
+
+const sequelize = new Sequelize('postgres://postgres:mysecretpassword@localhost:5432/db_user_task');
 
 export const register = async (req, res) => {
   const { username, email, password } = req.body;
@@ -29,5 +32,19 @@ export const login = async (req, res) => {
     }
   } catch (error) {
     res.status(400).json({ error: `Unable to log in ${error}` });
+  }
+};
+
+
+export const logout = async (req, res) => {
+  const token = req.header('Authorization')?.split(' ')[1];
+  if (!token) return res.status(400).json({ message: 'No Token Provided' });
+
+  try {
+    await sequelize.query('INSERT INTO blacklisted_tokens (token) VALUES ($1)', [token]);
+    res.status(200).json({ message: 'Logged Out Successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to Logout' });
+    console.log(err);
   }
 };

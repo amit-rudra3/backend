@@ -39,11 +39,27 @@ async function createTable() {
         console.log(err);
     }
 };
+async function blackListTokenTable() {
+    try {
+        const [result, metadata] = await sequelize.query(`
+            CREATE TABLE if not exists blacklisted_tokens (
+                id SERIAL PRIMARY KEY,
+                token TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+            `);
+        console.log(result);
+    }
+    catch(err){
+        console.log(err);
+    }
+};
 
 
   
 checkConnection();
 createTable();
+blackListTokenTable();
 
 app.use(express.json());
 
