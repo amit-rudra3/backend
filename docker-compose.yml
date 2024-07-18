@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "3000:3000"
+    depends_on:
+      - user-service
+      - task-service
+    links:
+      - user-service:user-service
+      - task-service:task-service
+
+  user-service:
+    build: ./user-service
+    ports:
+      - "3001:3001"
+    volumes:
+      - .:/app
+    environment:
+      - DATABASE_URL=postgres://user:password@db:5432/db
+    depends_on:
+      - db
+    links:
+      - db:db
+
+  task-service:
+    build: ./task-service
+    ports:
+      - "3002:3002"
+    environment:
+      - DATABASE_URL=postgres://user:password@db:5432/db
+    depends_on:
+      - db
+    links:
+      - db:db
+
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  pgdata:
