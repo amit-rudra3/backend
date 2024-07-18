@@ -62,7 +62,7 @@ Step 2 : Start the services using Docker Compose:
     
 
 ### Microservice Architecture
-![Microservice Architecture](assets/Screenshot 2024-07-19 022549.png)
+![Microservice Architecture](assets/pic.png)
 
 ### Database Architecture
 ![Database Architecture](assets/Untitled.png)
